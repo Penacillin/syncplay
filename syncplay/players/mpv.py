@@ -79,7 +79,7 @@ class OldMpvPlayer(MpvPlayer):
         self._listener.sendLine(u"no-osd set {} {}".format(property_, value))
 
     def setPaused(self, value):
-        if self._paused <> value:
+        if self._paused != value:
             self._paused = not self._paused
             self._listener.sendLine('cycle pause')
 

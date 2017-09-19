@@ -1,4 +1,4 @@
-from ConfigParser import SafeConfigParser, DEFAULTSECT
+from configparser import SafeConfigParser, DEFAULTSECT
 import argparse
 import os
 import sys
@@ -260,12 +260,12 @@ class ConfigurationGetter(object):
             for name in constants.CONFIG_NAMES:
                 if configFile and os.path.isfile(configFile):
                     break
-                if os.name <> 'nt':
+                if os.name != 'nt':
                     configFile = os.path.join(os.getenv('HOME', '.'), name)
                 else:
                     configFile = os.path.join(os.getenv('APPDATA', '.'), name)
             if configFile and not os.path.isfile(configFile):
-                if os.name <> 'nt':
+                if os.name != 'nt':
                     configFile = os.path.join(os.getenv('HOME', '.'), constants.DEFAULT_CONFIG_NAME_LINUX)
                 else:
                     configFile = os.path.join(os.getenv('APPDATA', '.'), constants.DEFAULT_CONFIG_NAME_WINDOWS)
@@ -300,8 +300,8 @@ class ConfigurationGetter(object):
     def _promptForMissingArguments(self, error=None):
         if self._config['noGui']:
             if error:
-                print "{}!".format(error)
-            print getMessage("missing-arguments-error")
+                print ("{}!".format(error))
+            print (getMessage("missing-arguments-error"))
             sys.exit()
         else:
             from syncplay.ui.GuiConfiguration import GuiConfiguration
@@ -396,7 +396,7 @@ class ConfigurationGetter(object):
         self._argparser.add_argument('_args', metavar='options', type=str, nargs='*', help=getMessage("args-argument"))
         args = self._argparser.parse_args()
         if args.version:
-            print getMessage("version-message").format(version, milestone)
+            print (getMessage("version-message").format(version, milestone))
             sys.exit()
         self._overrideConfigWithArgs(args)
         if not self._config['noGui']:
@@ -411,7 +411,7 @@ class ConfigurationGetter(object):
                     import appnope
                     appnope.nope()
             except ImportError:
-                print getMessage("unable-import-gui-error")
+                print (getMessage("unable-import-gui-error"))
                 self._config['noGui'] = True
         if self._config['file'] and self._config['file'][:2] == "--":
             self._config['playerArgs'].insert(0, self._config['file'])

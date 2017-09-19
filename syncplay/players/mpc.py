@@ -49,7 +49,7 @@ class MpcHcApi:
         self.__listener.SendCommand(self.CMD_OPENFILE, filePath)
     
     def isPaused(self):
-        return self.playState <> self.__MPC_PLAYSTATE.PS_PLAY and self.playState <> None
+        return self.playState != self.__MPC_PLAYSTATE.PS_PLAY and self.playState != None
  
     def askForVersion(self):
         self.__listener.SendCommand(self.CMD_GETVERSION)
@@ -137,7 +137,7 @@ class MpcHcApi:
                thread.start_new_thread(self.callbacks.onGetCurrentPosition, (self.lastFilePosition,))
         
         elif cmd == self.CMD_NOTIFYSEEK:
-            if self.lastFilePosition <> float(value): #Notify seek is sometimes sent twice
+            if self.lastFilePosition != float(value): #Notify seek is sometimes sent twice
                 self.lastFilePosition = float(value)
                 if self.callbacks.onSeek:
                     thread.start_new_thread(self.callbacks.onSeek, (self.lastFilePosition,))
@@ -378,7 +378,7 @@ class MPCHCAPIPlayer(BasePlayer):
             self._mpcApi.callbacks.onUpdateFilename = lambda _: self.__handleUpdatedFilename()
             self.__handleUpdatedFilename()
             self.askForStatus()
-        except Exception, err:
+        except Exception as  err:
             self.reactor.callFromThread(self.__client.ui.showErrorMessage, err.message, True)
             self.reactor.callFromThread(self.__client.stop)
             
@@ -450,9 +450,9 @@ class MPCHCAPIPlayer(BasePlayer):
     def _setPausedAccordinglyToServer(self):
         self.__forcePause()
         self.setPaused(self.__client.getGlobalPaused())
-        if self._mpcApi.isPaused() <> self.__client.getGlobalPaused():
+        if self._mpcApi.isPaused() != self.__client.getGlobalPaused():
             self.__refreshMpcPlayState()
-            if self._mpcApi.isPaused() <> self.__client.getGlobalPaused():
+            if self._mpcApi.isPaused() != self.__client.getGlobalPaused():
                 self.__setUpStateForNewlyOpenedFile()
     
     @retry(MpcHcApi.PlayerNotReadyException, constants.MPC_MAX_RETRIES, constants.MPC_RETRY_WAIT_TIME, 1)                

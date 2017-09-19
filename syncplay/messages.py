@@ -1,9 +1,9 @@
 # coding:utf8
 from syncplay import constants
 
-import messages_en
-import messages_ru
-import messages_de
+from . import messages_en
+from . import messages_ru
+from . import messages_de
 
 messages = {
            "en": messages_en.en,
@@ -27,10 +27,10 @@ def getMissingStrings():
     for lang in messages:
         if lang != "en" and lang != "CURRENT":
             for message in messages["en"]:
-                if not messages[lang].has_key(message):
+                if message not in  messages[lang]:
                     missingStrings = missingStrings + "({}) Missing: {}\n".format(lang, message)
             for message in messages[lang]:
-                if not messages["en"].has_key(message):
+                if message not in messages["en"]:
                     missingStrings = missingStrings + "({}) Unused: {}\n".format(lang, message)
 
     return missingStrings
@@ -46,7 +46,7 @@ def getInitialLanguage():
     return initialLanguage
 
 def isValidLanguage(language):
-    return messages.has_key(language)
+    return language in messages
 
 def getMessage(type_, locale=None):
     if constants.SHOW_TOOLTIPS == False:
@@ -58,12 +58,12 @@ def getMessage(type_, locale=None):
 
     lang = messages["CURRENT"]
     if locale and messages.has_key(locale):
-        if messages[locale].has_key(type_):
+        if type_ in messages[locale]:
             return unicode(messages[locale][type_])
-    if lang and messages.has_key(lang):
-        if messages[lang].has_key(type_):
+    if lang and lang in messages:
+        if type_ in messages[lang]:
             return unicode(messages[lang][type_])
-    if messages["en"].has_key(type_):
+    if type_ in messages["en"]:
         return unicode(messages["en"][type_])
     else:
         raise KeyError(type_)

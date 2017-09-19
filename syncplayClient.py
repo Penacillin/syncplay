@@ -5,7 +5,7 @@ import site, sys
 # libpath
 
 try:
-    if (sys.version_info.major != 2) or (sys.version_info.minor < 7):
+    if (sys.version_info.major != 3) or (sys.version_info.minor < 3):
         raise Exception("You must run Syncplay with Python 2.7!")
 except AttributeError:
     import warnings
@@ -17,4 +17,4 @@ from syncplay.utils import blackholeStdoutForFrozenWindow
 if __name__ == '__main__':
     blackholeStdoutForFrozenWindow()
     SyncplayClientManager().run()
-    
+

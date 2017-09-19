@@ -93,7 +93,7 @@ class MainWindow(QtGui.QMainWindow):
     def setPlaylistInsertPosition(self, newPosition):
         if not self.playlist.isEnabled():
             return
-        if MainWindow.insertPosition <> newPosition:
+        if MainWindow.insertPosition != newPosition:
             MainWindow.insertPosition = newPosition
             self.playlist.forceUpdate()
 
@@ -174,7 +174,7 @@ class MainWindow(QtGui.QMainWindow):
         playlistIndexFilename = None
 
         def setPlaylistIndexFilename(self, filename):
-            if filename <> self.playlistIndexFilename:
+            if filename != self.playlistIndexFilename:
                 self.playlistIndexFilename = filename
             self.updatePlaylistIndexIcon()
 
@@ -511,7 +511,7 @@ class MainWindow(QtGui.QMainWindow):
         if item:
             firstFile = item.sibling(item.row(), 0).data()
             pathFound = self._syncplayClient.fileSwitch.findFilepath(firstFile) if not isURL(firstFile) else None
-            if self._syncplayClient.userlist.currentUser.file is None or firstFile <> self._syncplayClient.userlist.currentUser.file["name"]:
+            if self._syncplayClient.userlist.currentUser.file is None or firstFile != self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(firstFile):
                     menu.addAction(QtGui.QPixmap(resourcespath + u"world_go.png"), getMessage("openstreamurl-menu-label"), lambda: self.openFile(firstFile))
                 elif pathFound:
@@ -561,16 +561,16 @@ class MainWindow(QtGui.QMainWindow):
         while item.parent().row() != -1:
             item = item.parent()
         roomToJoin = item.sibling(item.row(), 0).data()
-        if roomToJoin <> self._syncplayClient.getRoom():
+        if roomToJoin != self._syncplayClient.getRoom():
             menu.addAction(getMessage("joinroom-menu-label").format(roomToJoin), lambda: self.joinRoom(roomToJoin))
-        elif username and filename and filename <> getMessage("nofile-note"):
+        elif username and filename and filename != getMessage("nofile-note"):
             if self.config['sharedPlaylistEnabled'] and not self.isItemInPlaylist(filename):
                 if isURL(filename):
                     menu.addAction(QtGui.QPixmap(resourcespath + u"world_add.png"),getMessage("addusersstreamstoplaylist-menu-label").format(shortUsername), lambda: self.addStreamToPlaylist(filename))
                 else:
                     menu.addAction(QtGui.QPixmap(resourcespath + u"film_add.png"), getMessage("addusersfiletoplaylist-menu-label").format(shortUsername), lambda: self.addStreamToPlaylist(filename))
 
-            if self._syncplayClient.userlist.currentUser.file is None or filename <> self._syncplayClient.userlist.currentUser.file["name"]:
+            if self._syncplayClient.userlist.currentUser.file is None or filename != self._syncplayClient.userlist.currentUser.file["name"]:
                 if isURL(filename):
                     menu.addAction(QtGui.QPixmap(resourcespath + u"world_go.png"), getMessage("openusersstream-menu-label").format(shortUsername), lambda: self.openFile(filename))
                 else:
@@ -581,7 +581,7 @@ class MainWindow(QtGui.QMainWindow):
                 domain = utils.getDomainFromURL(filename)
                 menu.addAction(QtGui.QPixmap(resourcespath + u"shield_add.png"),getMessage("addtrusteddomain-menu-label").format(domain), lambda: self.addTrustedDomain(domain))
 
-            if not isURL(filename) and filename <> getMessage("nofile-note"):
+            if not isURL(filename) and filename != getMessage("nofile-note"):
                 path = self._syncplayClient.fileSwitch.findFilepath(filename)
                 if path:
                     menu.addAction(QtGui.QPixmap(resourcespath + u"folder_film.png"), getMessage('open-containing-folder'), lambda: utils.open_system_file_browser(path))
@@ -645,9 +645,9 @@ class MainWindow(QtGui.QMainWindow):
         while item.parent().row() != -1:
             item = item.parent()
         roomToJoin = item.sibling(item.row(), 0).data()
-        if roomToJoin <> self._syncplayClient.getRoom():
+        if roomToJoin != self._syncplayClient.getRoom():
             self.joinRoom(item.sibling(item.row(), 0).data())
-        elif username and filename and username <> self._syncplayClient.userlist.currentUser.username:
+        elif username and filename and username != self._syncplayClient.userlist.currentUser.username:
             if self._isTryingToChangeToCurrentFile(filename):
                 return
             if isURL(filename):
@@ -862,7 +862,7 @@ class MainWindow(QtGui.QMainWindow):
                     pass
                 URI = urllib.unquote(URI)
                 URI = URI.decode('utf-8')
-                if URI <> "":
+                if URI != "":
                     self.addStreamToPlaylist(URI)
             self.updatingPlaylist = False
 
@@ -891,7 +891,7 @@ class MainWindow(QtGui.QMainWindow):
         result = editPlaylistDialog.exec_()
         if result == QtGui.QDialog.Accepted:
             newPlaylist = utils.convertMultilineStringToList(editPlaylistTextbox.toPlainText())
-            if newPlaylist <> self.playlistState and self._syncplayClient and not self.updatingPlaylist:
+            if newPlaylist != self.playlistState and self._syncplayClient and not self.updatingPlaylist:
                 self.setPlaylist(newPlaylist)
                 self._syncplayClient.playlist.changePlaylist(newPlaylist)
                 self._syncplayClient.fileSwitch.updateInfo()
@@ -1040,7 +1040,7 @@ class MainWindow(QtGui.QMainWindow):
         playlistItems = []
         for playlistItem in xrange(self.playlist.count()):
             playlistItemText = self.playlist.item(playlistItem).text()
-            if playlistItemText <> getMessage("playlist-instruction-item-message"):
+            if playlistItemText != getMessage("playlist-instruction-item-message"):
                 playlistItems.append(playlistItemText)
         return playlistItems
 
@@ -1048,13 +1048,13 @@ class MainWindow(QtGui.QMainWindow):
         if self.updatingPlaylist:
             return
         newPlaylist = self.getPlaylistState()
-        if newPlaylist <> self.playlistState and self._syncplayClient and not self.updatingPlaylist:
+        if newPlaylist != self.playlistState and self._syncplayClient and not self.updatingPlaylist:
             self.playlistState = newPlaylist
             self._syncplayClient.playlist.changePlaylist(newPlaylist)
             self._syncplayClient.fileSwitch.updateInfo()
 
     def sendChatMessage(self):
-        if self.chatInput.text() <> "":
+        if self.chatInput.text() != "":
             self._syncplayClient.sendChat(self.chatInput.text())
             self.chatInput.setText("")
 

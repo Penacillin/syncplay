@@ -110,7 +110,7 @@ class MplayerPlayer(BasePlayer):
         time.sleep(0.03)
 
     def setPaused(self, value):
-        if self._paused <> value:
+        if self._paused != value:
             self._paused = not self._paused
             self._listener.sendLine('pause')
 

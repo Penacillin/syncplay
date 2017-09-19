@@ -45,7 +45,7 @@ def retry(ExceptionToCheck, tries=4, delay=3, backoff=2, logger=None):
                     return f(*args, **kwargs)
                     try_one_last_time = False
                     break
-                except ExceptionToCheck, e:
+                except ExceptionToCheck as e:
                     if logger:
                         msg = getMessage("retrying-notification").format(str(e), mdelay)
                         logger.warning(msg)
@@ -139,7 +139,7 @@ def blackholeStdoutForFrozenWindow():
             _error = None
             def write(self, text, fname='.syncplay.log'):
                 if self._file is None and self._error is None:
-                    if os.name <> 'nt':
+                    if os.name != 'nt':
                         path = os.path.join(os.getenv('HOME', '.'), fname)
                     else:
                         path = os.path.join(os.getenv('APPDATA', '.'), fname)
