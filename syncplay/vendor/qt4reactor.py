@@ -241,7 +241,10 @@ class QtReactor(posixbase.PosixReactorBase):
         if not self.running and self._blockApp:
             self._blockApp.quit()
         self._timer.stop()
-        delay = max(delay, 1)
+        if(delay is None):
+            delay = 1
+        else:
+            delay = max(delay, 1)
         if not fromqt:
             self.qApp.processEvents(QEventLoop.AllEvents, delay * 1000)
         if self.timeout() is None:

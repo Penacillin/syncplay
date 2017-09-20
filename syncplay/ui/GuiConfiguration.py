@@ -38,7 +38,7 @@ class GuiConfiguration(object):
 
 class GetPlayerIconThread(threading.Thread, QtCore.QObject):
     daemon = True
-    done = QtCore.pyqtSignal('QString', 'QString')
+    done = QtCore.pyqtSignal(str, str)
 	
     def __init__(self):
         threading.Thread.__init__(self, name='GetPlayerIcon')
@@ -46,8 +46,9 @@ class GetPlayerIconThread(threading.Thread, QtCore.QObject):
         self.condvar = threading.Condition()
         self.playerpath = None
 
-    @pyqtSlot('QString', 'QString', name="updateExecutableIconLink")
+    @pyqtSlot(str, str, name="updateExecutableIconLink")
     def updateExecutableIconLink(self, iconpath, playerpath):
+        print("Signal received %s %s" % (iconpath, playerpath))
         self.configDialogLink._updateExecutableIcon(iconpath, playerpath)
         pass
 		
@@ -183,6 +184,7 @@ class ConfigDialog(QDialog):
 
     @pyqtSlot('QString', 'QString', name="_updateExecutableIcon")
     def _updateExecutableIcon(self, iconpath, playerpath):
+        print("Signal went through %s %s" %(iconpath, playerpath))
         if iconpath is not None and iconpath != "":
             if iconpath.endswith('.mng'):
                 movie = QtGui.QMovie(self.resourcespath + iconpath)

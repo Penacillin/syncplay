@@ -393,7 +393,7 @@ class MplayerPlayer(BasePlayer):
 
         def actuallySendLine(self, line):
             try:
-                if not isinstance(line, unicode):
+                if not isinstance(line, str):
                     line = line.decode('utf8')
                 line = (line + u"\n").encode('utf8')
                 self.__playerController._client.ui.showDebugMessage("player >> {}".format(line))
