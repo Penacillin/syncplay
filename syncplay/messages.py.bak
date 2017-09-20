@@ -1,5 +1,4 @@
 # coding:utf8
-from builtins import str
 from syncplay import constants
 
 from . import messages_en
@@ -60,11 +59,11 @@ def getMessage(type_, locale=None):
     lang = messages["CURRENT"]
     if locale and locale in messages:
         if type_ in messages[locale]:
-            return str(messages[locale][type_])
+            return unicode(messages[locale][type_])
     if lang and lang in messages:
         if type_ in messages[lang]:
-            return str(messages[lang][type_])
+            return unicode(messages[lang][type_])
     if type_ in messages["en"]:
-        return str(messages["en"][type_])
+        return unicode(messages["en"][type_])
     else:
         raise KeyError(type_)

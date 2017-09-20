@@ -1,6 +1,7 @@
-from PySide import QtCore, QtGui
-from PySide.QtCore import QSettings, Qt, QCoreApplication, QUrl
-from PySide.QtGui import QApplication, QLineEdit, QCursor, QLabel, QCheckBox, QDesktopServices, QIcon, QImage, QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtCore import QSettings, Qt, QCoreApplication, QUrl, pyqtSlot
+from PyQt5.QtWidgets import QApplication, QLineEdit, QLabel, QCheckBox,   QButtonGroup, QRadioButton, QDoubleSpinBox, QPlainTextEdit
+from PyQt5.QtGui import QCursor, QDesktopServices, QIcon,  QImage
 from syncplay.players.playerFactory import PlayerFactory
 from datetime import datetime
 from syncplay import utils
@@ -35,7 +36,7 @@ class GuiConfiguration:
 
 class GetPlayerIconThread(threading.Thread, QtCore.QObject):
     daemon = True
-    done = QtCore.Signal(str, str)
+    done = QtCore.pyqtSignal(str, str)
 
     def __init__(self):
         threading.Thread.__init__(self, name='GetPlayerIcon')
@@ -64,8 +65,9 @@ class GetPlayerIconThread(threading.Thread, QtCore.QObject):
             iconpath = PlayerFactory().getPlayerIconByPath(playerpath)
             self.done.emit(iconpath, playerpath)
 
-
-class ConfigDialog(QtGui.QDialog):
+			# TODO CHANGE THIS
+from PyQt5.QtWidgets import QDialog
+class ConfigDialog(QDialog):
 
     pressedclosebutton = True
     moreToggling = False
@@ -168,7 +170,7 @@ class ConfigDialog(QtGui.QDialog):
             settings.endGroup()
         return foundpath
 
-    @QtCore.Slot(str, str)
+    @pyqtSlot(str, str)
     def _updateExecutableIcon(self, iconpath, playerpath):
         if iconpath is not None and iconpath != "":
             if iconpath.endswith('.mng'):

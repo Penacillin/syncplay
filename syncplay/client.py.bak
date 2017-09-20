@@ -95,7 +95,7 @@ class SyncplayClient(object):
         self.setUsername(config['name'])
         self.setRoom(config['room'])
         if config['password']:
-            config['password'] = hashlib.md5(str(config['password']).encode('utf-8')).hexdigest()
+            config['password'] = hashlib.md5(config['password']).hexdigest()
         self._serverPassword = config['password']
         if not config['file']:
             self.__getUserlistOnLogon = True
@@ -1109,7 +1109,7 @@ class SyncplayUserlist(object):
         differentName = False
         differentSize = False
         differentDuration = False
-        for otherUser in list(self._users.values()):
+        for otherUser in self._users.values():
             if otherUser.room == self.currentUser.room and otherUser.file:
                 if not utils.sameFilename(self.currentUser.file['name'], otherUser.file['name']):
                     differentName = True
@@ -1187,7 +1187,7 @@ class SyncplayUserlist(object):
             return True
         if not self.currentUser.isReady():
             return False
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.room == self.currentUser.room:
                 if user.isReadyWithFile() == False:
                     return False
@@ -1199,7 +1199,7 @@ class SyncplayUserlist(object):
         return True
 
     def areAllOtherUsersInRoomReady(self):
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.room == self.currentUser.room and user.isReadyWithFile() == False:
                 return False
         return True
@@ -1208,14 +1208,14 @@ class SyncplayUserlist(object):
         readyCount = 0
         if self.currentUser.isReady():
             readyCount += 1
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.room == self.currentUser.room and user.isReadyWithFile():
                 readyCount += 1
         return readyCount
     
     def usersInRoomCount(self):
         userCount = 1
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.room == self.currentUser.room and user.isReadyWithFile():
                 userCount += 1
         return userCount
@@ -1224,33 +1224,33 @@ class SyncplayUserlist(object):
         notReady = []
         if not self.currentUser.isReady():
             notReady.append(self.currentUser.username)
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.room == self.currentUser.room and user.isReadyWithFile() == False:
                 notReady.append(user.username)
         return ", ".join(notReady)
 
     def areAllFilesInRoomSame(self):
         if self.currentUser.file:
-            for user in list(self._users.values()):
+            for user in self._users.values():
                 if user.room == self.currentUser.room and user.file and not self.currentUser.isFileSame(user.file):
                     if user.canControl():
                         return False
         return True
 
     def areYouAloneInRoom(self):
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.room == self.currentUser.room:
                 return False
         return True
     
     def onlyUserInRoomWhoSupportsReadiness(self):
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.room == self.currentUser.room and user.isReadyWithFile() is not None:
                 return False
         return True
 
     def isUserInYourRoom(self, username):
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.username == username and user.room == self.currentUser.room:
                 return True
         return False
@@ -1259,7 +1259,7 @@ class SyncplayUserlist(object):
         if self.currentUser.username == username and self.currentUser.canControl():
             return True
 
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.username == username and user.canControl():
                 return True
         return False
@@ -1268,7 +1268,7 @@ class SyncplayUserlist(object):
         if self.currentUser.username == username:
             return self.currentUser.isReadyWithFile()
 
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.username == username:
                 return user.isReadyWithFile()
         return None
@@ -1277,7 +1277,7 @@ class SyncplayUserlist(object):
         if self.currentUser.username == username:
             return self.currentUser.isReady()
 
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.username == username:
                 return user.isReady()
         return None
@@ -1302,7 +1302,7 @@ class SyncplayUserlist(object):
 
     def showUserList(self):
         rooms = {}
-        for user in list(self._users.values()):
+        for user in self._users.values():
             if user.room not in rooms:
                 rooms[user.room] = []
             rooms[user.room].append(user)

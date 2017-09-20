@@ -1,5 +1,7 @@
-from PySide import QtGui
-from PySide.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine
+#from PySide import QtGui
+#from PySide.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import  QSettings, QSize, QPoint, QUrl, QLine
 from syncplay import utils, constants, version
 from syncplay.messages import getMessage
 import sys
@@ -13,7 +15,7 @@ from functools import wraps
 from twisted.internet import task
 lastCheckedForUpdates = None
 
-class UserlistItemDelegate(QtGui.QStyledItemDelegate):
+class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
     def __init__(self):
         QtGui.QStyledItemDelegate.__init__(self)
 
@@ -84,7 +86,7 @@ class UserlistItemDelegate(QtGui.QStyledItemDelegate):
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+16)
         QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
-class MainWindow(QtGui.QMainWindow):
+class MainWindow(QtWidgets.QMainWindow):
     insertPosition = None
     playlistState = []
     updatingPlaylist = False
@@ -97,7 +99,7 @@ class MainWindow(QtGui.QMainWindow):
             MainWindow.insertPosition = newPosition
             self.playlist.forceUpdate()
 
-    class PlaylistItemDelegate(QtGui.QStyledItemDelegate):
+    class PlaylistItemDelegate(QtWidgets.QStyledItemDelegate):
         def paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex):
             itemQPainter.save()
             currentQAbstractItemModel = indexQModelIndex.model()
@@ -131,7 +133,7 @@ class MainWindow(QtGui.QMainWindow):
                 itemQPainter.drawLine(line)
             itemQPainter.restore()
 
-    class PlaylistGroupBox(QtGui.QGroupBox):
+    class PlaylistGroupBox(QtWidgets.QGroupBox):
 
         def dragEnterEvent(self, event):
             data = event.mimeData()
@@ -169,7 +171,7 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 super(MainWindow.PlaylistWidget, self).dropEvent(event)
 
-    class PlaylistWidget(QtGui.QListWidget):
+    class PlaylistWidget(QtWidgets.QListWidget):
         selfWindow = None
         playlistIndexFilename = None
 
@@ -273,11 +275,11 @@ class MainWindow(QtGui.QMainWindow):
 
 
 
-    class topSplitter(QtGui.QSplitter):
+    class topSplitter(QtWidgets.QSplitter):
         def createHandle(self):
             return self.topSplitterHandle(self.orientation(), self)
 
-        class topSplitterHandle(QtGui.QSplitterHandle):
+        class topSplitterHandle(QtWidgets.QSplitterHandle):
             def mouseReleaseEvent(self, event):
                 QtGui.QSplitterHandle.mouseReleaseEvent(self, event)
                 self.parent().parent().parent().updateListGeometry()

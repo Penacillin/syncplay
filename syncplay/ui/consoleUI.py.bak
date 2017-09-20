@@ -1,5 +1,4 @@
 from __future__ import print_function
-from builtins import input
 import threading
 import time 
 import syncplay
@@ -33,7 +32,7 @@ class ConsoleUI(threading.Thread):
     def run(self):
         try:
             while True:
-                data = input().decode(sys.stdin.encoding)
+                data = raw_input().decode(sys.stdin.encoding)
                 data = data.rstrip('\n\r')
                 if not self.promptMode.isSet():
                     self.PromptResult = data
@@ -95,7 +94,7 @@ class ConsoleUI(threading.Thread):
         if noTimestamp:
             print(message)
         else:
-            print ("hi") #(time.strftime(constants.UI_TIME_FORMAT,  ))
+            print(time.strftime(constants.UI_TIME_FORMAT, time.localtime()).decode('utf-8') + message)
 
     def showDebugMessage(self, message):
         print(message)

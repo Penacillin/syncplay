@@ -38,7 +38,7 @@ Subsequent port by therve
 
 import sys
 import time
-from zope.interface import implements, implementer
+from zope.interface import implements
 from twisted.internet.interfaces import IReactorFDSet
 from twisted.python import log, runtime
 from twisted.internet import posixbase
@@ -70,9 +70,8 @@ class TwistedSocketNotifier(QObject):
             self.fn = self.read
         else:
             self.fn = self.write
-        self.notifier.activated.connect(self.fn)
-        #self.connect(self.notifier, SIGNAL("activated(int)"), self.fn)
-        #self.notifier.connect(self.fn)
+        QObject.connect(self.notifier, SIGNAL("activated(int)"), self.fn)
+
 
     def shutdown(self):
         self.notifier.setEnabled(False)
@@ -126,9 +125,9 @@ class TwistedSocketNotifier(QObject):
         log.callWithLogger(w, _write)
 
 
-@implementer(IReactorFDSet)
+
 class QtReactor(posixbase.PosixReactorBase):
-    #implements(IReactorFDSet)
+    implements(IReactorFDSet)
 
     def __init__(self):
         self._reads = {}
@@ -136,7 +135,8 @@ class QtReactor(posixbase.PosixReactorBase):
         self._notifiers = {}
         self._timer = QTimer()
         self._timer.setSingleShot(True)
-       # QObject.connect(self._timer, SIGNAL("timeout()"), self.iterate)
+        QObject.connect(self._timer, SIGNAL("timeout()"), self.iterate)
+
         if QCoreApplication.instance() is None:
             # Application Object has not been started yet
             self.qApp=QCoreApplication([])
@@ -208,11 +208,11 @@ class QtReactor(posixbase.PosixReactorBase):
 
 
     def getReaders(self):
-        return list(self._reads.keys())
+        return self._reads.keys()
 
 
     def getWriters(self):
-        return list(self._writes.keys())
+        return self._writes.keys()
 
 
     def callLater(self,howlong, *args, **kargs):
@@ -290,7 +290,7 @@ class QtEventReactor(QtReactor):
 
 
     def doEvents(self):
-        handles = list(self._events.keys())
+        handles = self._events.keys()
         if len(handles) > 0:
             val = None
             while val != WAIT_TIMEOUT:

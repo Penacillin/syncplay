@@ -15,7 +15,7 @@ from syncplay.constants import PING_MOVING_AVERAGE_WEIGHT
 
 class JSONCommandProtocol(LineReceiver):
     def handleMessages(self, messages):
-        for message in list(messages.items()):
+        for message in messages.items():
             command = message[0]
             if command == "Hello":
                 self.handleHello(message[1])
@@ -46,7 +46,7 @@ class JSONCommandProtocol(LineReceiver):
 
     def sendMessage(self, dict_):
         line = json.dumps(dict_)
-        self.sendLine((line))
+        self.sendLine(str(line))
         self.showDebugMessage("client/server >> {}".format(line))
 
     def drop(self):
@@ -115,7 +115,7 @@ class SyncClientProtocol(JSONCommandProtocol):
         self.sendMessage({"Hello": hello})
 
     def _SetUser(self, users):
-        for user in list(users.items()):
+        for user in users.items():
             username = user[0]
             settings = user[1]
             room = settings["room"]["name"] if "room" in settings else None
@@ -129,7 +129,7 @@ class SyncClientProtocol(JSONCommandProtocol):
                 self._client.userlist.modUser(username, room, file_)
 
     def handleSet(self, settings):
-        for (command, values) in list(settings.items()):
+        for (command, values) in settings.items():
             if command == "room":
                 roomName = values["name"] if "name" in values else None
                 self._client.setRoom(roomName)
@@ -171,9 +171,9 @@ class SyncClientProtocol(JSONCommandProtocol):
 
     def handleList(self, userList):
         self._client.userlist.clearList()
-        for room in list(userList.items()):
+        for room in userList.items():
             roomName = room[0]
-            for user in list(room[1].items()):
+            for user in room[1].items():
                 userName = user[0]
                 file_ = user[1]['file'] if user[1]['file'] != {} else None
                 isController = user[1]['controller'] if 'controller' in user[1] else False
@@ -391,7 +391,7 @@ class SyncServerProtocol(JSONCommandProtocol):
 
     @requireLogged
     def handleSet(self, settings):
-        for set_ in list(settings.items()):
+        for set_ in settings.items():
             command = set_[0]
             if command == "room":
                 roomName = set_[1]["name"] if "name" in set_[1] else None
