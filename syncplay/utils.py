@@ -295,7 +295,7 @@ def getListAsMultilineString(pathArray):
     return u"\n".join(pathArray) if pathArray else ""
 
 def convertMultilineStringToList(multilineString):
-    return unicode.split(multilineString,u"\n") if multilineString else ""
+    return str.split(multilineString,u"\n") if multilineString else ""
 
 def playlistIsValid(files):
     if len(files) > constants.PLAYLIST_MAX_ITEMS:

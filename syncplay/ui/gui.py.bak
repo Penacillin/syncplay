@@ -1,19 +1,13 @@
 from __future__ import print_function
-from __future__ import division
 #from PySide import QtGui
 #from PySide.QtCore import Qt, QSettings, QSize, QPoint, QUrl, QLine
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import range
-from past.utils import old_div
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import  QSettings, QSize, QPoint, QUrl, QLine, Qt
 from syncplay import utils, constants, version
 from syncplay.messages import getMessage
 import sys
 import time
-import urllib.request, urllib.parse, urllib.error
+import urllib
 from datetime import datetime
 import re
 import os
@@ -24,17 +18,17 @@ lastCheckedForUpdates = None
 
 class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
     def __init__(self):
-        QtWidgets.QStyledItemDelegate.__init__(self)
+        QtGui.QStyledItemDelegate.__init__(self)
 
     def sizeHint(self, option, index):
-        size = QtWidgets.QStyledItemDelegate.sizeHint(self, option, index)
+        size = QtGui.QStyledItemDelegate.sizeHint(self, option, index)
         if (index.column() == constants.USERLIST_GUI_USERNAME_COLUMN):
             size.setWidth(size.width() + constants.USERLIST_GUI_USERNAME_OFFSET)
         return size
 
     def paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex):
         column = indexQModelIndex.column()
-        midY = int(old_div((optionQStyleOptionViewItem.rect.y() + optionQStyleOptionViewItem.rect.bottomLeft().y()), 2))
+        midY = int((optionQStyleOptionViewItem.rect.y() + optionQStyleOptionViewItem.rect.bottomLeft().y()) / 2)
         if column == constants.USERLIST_GUI_USERNAME_COLUMN:
             currentQAbstractItemModel = indexQModelIndex.model()
             itemQModelIndex = currentQAbstractItemModel.index(indexQModelIndex.row(), constants.USERLIST_GUI_USERNAME_COLUMN, indexQModelIndex.parent())
@@ -91,7 +85,7 @@ class UserlistItemDelegate(QtWidgets.QStyledItemDelegate):
                     midY - 8,
                     streamSwitchIconQPixmap.scaled(16, 16, Qt.KeepAspectRatio))
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+16)
-        QtWidgets.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
+        QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
 class MainWindow(QtWidgets.QMainWindow):
     insertPosition = None
@@ -117,14 +111,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 resourcespath = utils.findWorkingDir() + u"/resources/"
             if currentlyPlayingFile:
                 currentlyplayingIconQPixmap = QtGui.QPixmap(resourcespath + u"bullet_right_grey.png")
-                midY = int(old_div((optionQStyleOptionViewItem.rect.y() + optionQStyleOptionViewItem.rect.bottomLeft().y()), 2))
+                midY = int((optionQStyleOptionViewItem.rect.y() + optionQStyleOptionViewItem.rect.bottomLeft().y()) / 2)
                 itemQPainter.drawPixmap (
                     (optionQStyleOptionViewItem.rect.x()+4),
                     midY-8,
                     currentlyplayingIconQPixmap.scaled(6, 16, Qt.KeepAspectRatio))
                 optionQStyleOptionViewItem.rect.setX(optionQStyleOptionViewItem.rect.x()+10)
 
-            QtWidgets.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
+            QtGui.QStyledItemDelegate.paint(self, itemQPainter, optionQStyleOptionViewItem, indexQModelIndex)
 
             lineAbove = False
             lineBelow = False
@@ -170,7 +164,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 indexRow = window.playlist.count() if window.clearedPlaylistNote else 0
 
                 for url in urls[::-1]:
-                    dropfilepath = os.path.abspath(str(url.toLocalFile()))
+                    dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
                     if os.path.isfile(dropfilepath):
                         window.addFileToPlaylist(dropfilepath, indexRow)
                     elif os.path.isdir(dropfilepath):
@@ -188,7 +182,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.updatePlaylistIndexIcon()
 
         def updatePlaylistIndexIcon(self):
-            for item in range(self.count()):
+            for item in xrange(self.count()):
                 itemFilename = self.item(item).text()
                 isPlayingFilename = itemFilename == self.playlistIndexFilename
                 self.item(item).setData(Qt.UserRole + constants.PLAYLISTITEM_CURRENTLYPLAYING_ROLE, isPlayingFilename)
@@ -221,7 +215,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 super(MainWindow.PlaylistWidget, self).keyPressEvent(event)
 
         def updatePlaylist(self, newPlaylist):
-            for index in range(self.count()):
+            for index in xrange(self.count()):
                 self.takeItem(0)
             uniquePlaylist = []
             for item in newPlaylist:
@@ -272,7 +266,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if indexRow == -1:
                     indexRow = window.playlist.count()
                 for url in urls[::-1]:
-                    dropfilepath = os.path.abspath(str(url.toLocalFile()))
+                    dropfilepath = os.path.abspath(unicode(url.toLocalFile()))
                     if os.path.isfile(dropfilepath):
                         window.addFileToPlaylist(dropfilepath, indexRow)
                     elif os.path.isdir(dropfilepath):
@@ -345,7 +339,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.playlistGroup.setEnabled(False)
 
     def showMessage(self, message, noTimestamp=False):
-        message = str(message)
+        message = unicode(message)
         username = None
         messageWithUsername = re.match(constants.MESSAGE_WITH_USERNAME_REGEX, message, re.UNICODE)
         if messageWithUsername:
@@ -358,7 +352,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if noTimestamp:
             self.newMessage(u"{}<br />".format(message))
         else:
-            self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + u"<br />")
+            self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()).decode('utf-8') + message + u"<br />")
 
     @needsClient
     def getFileSwitchState(self, filename):
@@ -438,7 +432,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     filedurationitem = QtGui.QStandardItem(u"({})".format(formatTime(user.file['duration'])))
                     filename = user.file['name']
                     if isURL(filename):
-                        filename = urllib.parse.unquote(filename)
+                        filename = urllib.unquote(filename)
                         try:
                             filename = filename.decode('utf-8')
                         except UnicodeEncodeError:
@@ -684,13 +678,13 @@ class MainWindow(QtWidgets.QMainWindow):
         print(message)
 
     def showErrorMessage(self, message, criticalerror=False):
-        message = str(message)
+        message = unicode(message)
         if criticalerror:
-            QtWidgets.QMessageBox.critical(self, "Syncplay", message)
+            QtGui.QMessageBox.critical(self, "Syncplay", message)
         message = message.replace(u"&", u"&amp;").replace(u'"', u"&quot;").replace(u"<", u"&lt;").replace(u">", u"&gt;")
         message = message.replace(u"\n", u"<br />")
         message = u"<span style=\"{}\">".format(constants.STYLE_ERRORNOTIFICATION) + message + u"</span>"
-        self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()) + message + u"<br />")
+        self.newMessage(time.strftime(constants.UI_TIME_FORMAT, time.localtime()).decode('utf-8') + message + u"<br />")
 
     @needsClient
     def joinRoom(self, room=None):
@@ -869,7 +863,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     URI = URI.encode('utf-8')
                 except UnicodeDecodeError:
                     pass
-                URI = urllib.parse.unquote(URI)
+                URI = urllib.unquote(URI)
                 URI = URI.decode('utf-8')
                 if URI != "":
                     self.addStreamToPlaylist(URI)
@@ -970,7 +964,7 @@ class MainWindow(QtWidgets.QMainWindow):
             options = QtGui.QFileDialog.Options(QtGui.QFileDialog.ShowDirsOnly | QtGui.QFileDialog.DontUseNativeDialog)
         else:
             options = QtGui.QFileDialog.Options(QtGui.QFileDialog.ShowDirsOnly)        
-        folderName = str(QtGui.QFileDialog.getExistingDirectory(self,None,self.getInitialMediaDirectory(includeUserSpecifiedDirectories=False),options))
+        folderName = unicode(QtGui.QFileDialog.getExistingDirectory(self,None,self.getInitialMediaDirectory(includeUserSpecifiedDirectories=False),options))
         if folderName:
             existingMediaDirs = MediaDirectoriesTextbox.toPlainText()
             if existingMediaDirs == "":
@@ -1047,7 +1041,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def getPlaylistState(self):
         playlistItems = []
-        for playlistItem in range(self.playlist.count()):
+        for playlistItem in xrange(self.playlist.count()):
             playlistItemText = self.playlist.item(playlistItem).text()
             if playlistItemText != getMessage("playlist-instruction-item-message"):
                 playlistItems.append(playlistItemText)
@@ -1477,12 +1471,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 if userInitiated == True:
                     updateURL = constants.SYNCPLAY_DOWNLOAD_URL
         if updateURL is not None:
-            reply = QtWidgets.QMessageBox.question(self, "Syncplay",
-                                        updateMessage, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-            if reply == QtWidgets.QMessageBox.Yes:
+            reply = QtGui.QMessageBox.question(self, "Syncplay",
+                                        updateMessage, QtGui.QMessageBox.StandardButton.Yes | QtGui.QMessageBox.StandardButton.No)
+            if reply == QtGui.QMessageBox.Yes:
                 self.QtGui.QDesktopServices.openUrl(QUrl(updateURL))
         elif userInitiated:
-            QtWidgets.QMessageBox.information(self, "Syncplay", updateMessage)
+            QtGui.QMessageBox.information(self, "Syncplay", updateMessage)
         else:
             self.showMessage(updateMessage)
 
@@ -1500,7 +1494,7 @@ class MainWindow(QtWidgets.QMainWindow):
         data = event.mimeData()
         urls = data.urls()
         if urls and urls[0].scheme() == 'file':
-            dropfilepath = os.path.abspath(str(event.mimeData().urls()[0].toLocalFile()))
+            dropfilepath = os.path.abspath(unicode(event.mimeData().urls()[0].toLocalFile()))
             if rewindFile == False:
                 self._syncplayClient._player.openFile(dropfilepath)
             else:
@@ -1558,7 +1552,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return True
 
     def isItemInPlaylist(self, filename):
-        for playlistindex in range(self.playlist.count()):
+        for playlistindex in xrange(self.playlist.count()):
             if self.playlist.item(playlistindex).text() == filename:
                 return True
         return False
@@ -1570,7 +1564,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def removePlaylistNote(self):
         if not self.clearedPlaylistNote:
-            for index in range(self.playlist.count()):
+            for index in xrange(self.playlist.count()):
                 self.playlist.takeItem(0)
             self.clearedPlaylistNote = True
 
