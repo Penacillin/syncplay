@@ -151,7 +151,7 @@ def blackholeStdoutForFrozenWindow():
             def flush(self):
                 if self._file is not None:
                     self._file.flush()
-        sys.stderr = Stderr()
+        #sys.stderr = Stderr()
         del Stderr
 
         class Blackhole(object):
@@ -160,7 +160,7 @@ def blackholeStdoutForFrozenWindow():
                 pass
             def flush(self):
                 pass
-        sys.stdout = Blackhole()
+        #sys.stdout = Blackhole()
         del Blackhole
 
 def truncateText(unicodeText, maxLength):

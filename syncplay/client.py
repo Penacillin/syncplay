@@ -661,19 +661,25 @@ class SyncplayClient(object):
             self._player.setPaused(paused)
 
     def start(self, host, port):
+        print("Start called")
         if self._running:
             return
         self._running = True
+        print("hasn't started, going to")
         if self._playerClass:
+            print("_playerClass exist")
             perPlayerArguments = utils.getPlayerArgumentsByPathAsArray(self._config['perPlayerArguments'],self._config['playerPath'])
             if perPlayerArguments:
                 self._config['playerArgs'].extend(perPlayerArguments)
+            print("call later %s %s %s" %  (self._config['playerPath'], self._config['file'], self._config['playerArgs']))
             reactor.callLater(0.1, self._playerClass.run, self, self._config['playerPath'], self._config['file'], self._config['playerArgs'], )
             self._playerClass = None
         self.protocolFactory = SyncClientFactory(self)
         port = int(port)
         reactor.connectTCP(host, port, self.protocolFactory)
+        print("reacter is now running")
         reactor.run()
+        print("reacter is now running")
 
     def stop(self, promptForAction=False):
         if not self._running:

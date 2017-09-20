@@ -296,6 +296,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.parent().parent().parent().updateListGeometry()
 
     def needsClient(f):  # @NoSelf
+        print("needsClient called")
         @wraps(f)
         def wrapper(self, *args, **kwds):
             if not self._syncplayClient:
@@ -305,6 +306,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return wrapper
 
     def addClient(self, client):
+        print("adding gui interface")
         self._syncplayClient = client
         self.roomInput.setText(self._syncplayClient.getRoom())
         self.config = self._syncplayClient.getConfig()
@@ -330,6 +332,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.updateAutoPlayIcon()
         except:
             self.showErrorMessage("Failed to load some settings.")
+            print("ERROR")
         self.automaticUpdateCheck()
 
     def promptFor(self, prompt=">", message=""):
@@ -1068,13 +1071,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.chatInput.setText("")
 
     def addTopLayout(self, window):
-		#TODO: Qt.Horizontal
+        #TODO: Qt.Horizontal
         window.topSplit = self.topSplitter(1, self)
 
         window.outputLayout = QtWidgets.QVBoxLayout()
         window.outputbox = QtWidgets.QTextBrowser()
         window.outputbox.setReadOnly(True)
-		# TODO :         window.outputbox.setTextInteractionFlags(window.outputbox.textInteractionFlags() | Qt.TextSelectableByKeyboard)
+        # TODO :         window.outputbox.setTextInteractionFlags(window.outputbox.textInteractionFlags() | Qt.TextSelectableByKeyboard)
         window.outputbox.setTextInteractionFlags(window.outputbox.textInteractionFlags() | 2)
         window.outputbox.setOpenExternalLinks(True)
         window.outputbox.unsetCursor()
@@ -1637,7 +1640,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.resourcespath = utils.findWorkingDir() + u"/resources/"
         # TODO:Qt.AA_DontUseNativeMenuBar
-        self.setWindowFlags(self.windowFlags() & 6)
+        self.setWindowFlags(self.windowFlags() | 6)
         self.setWindowTitle("Syncplay v" + version)
         self.mainLayout = QtWidgets.QVBoxLayout()
         self.addTopLayout(self)
@@ -1645,8 +1648,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addMenubar(self)
         self.addMainFrame(self)
         self.loadSettings()
-        self.setWindowIcon(QtGui.QIcon(self.resourcespath + u"syncplay.png"))
-        self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.AA_DontUseNativeMenuBar & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowIcon(self.QtGui.QIcon(self.resourcespath + u"syncplay.png"))
+        #self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & Qt.AA_DontUseNativeMenuBar & Qt.WindowMinimizeButtonHint & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowCloseButtonHint | Qt.AA_DontUseNativeMenuBar | Qt.WindowMinimizeButtonHint  | ~Qt.WindowContextHelpButtonHint)
         self.show()
+        print("Showing window now")
         self.setAcceptDrops(True)
         self.clearedPlaylistNote = False

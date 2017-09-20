@@ -22,7 +22,7 @@ class GuiConfiguration(object):
 
     def run(self):
         if QCoreApplication.instance() is None:
-            self.app = QtGui.QApplication(sys.argv)
+            self.app = QtWidgets.QApplication(sys.argv)
         dialog = ConfigDialog(self.config, self._availablePlayerPaths, self.error, self.defaultConfig)
         dialog.exec_()
 
@@ -1077,7 +1077,7 @@ class ConfigDialog(QDialog):
         self.setWindowTitle(getMessage("config-window-title"))
         self.setWindowFlags(self.windowFlags() & Qt.WindowCloseButtonHint & ~Qt.WindowContextHelpButtonHint)
         self.setWindowIcon(QtGui.QIcon(resourcespath + u"syncplay.png"))
-		# TODO: FIX THIS REMOVE IMPORT
+        # TODO: FIX THIS REMOVE IMPORT
         from PyQt5 import QtWidgets
         self.stackedLayout = QtWidgets.QStackedLayout()
         self.stackedFrame = QtWidgets.QFrame()
